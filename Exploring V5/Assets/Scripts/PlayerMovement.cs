@@ -12,6 +12,10 @@ public class PlayerMovement : MonoBehaviour
     public Camera FPScam;
     private float _baseFov;
     private float _sprintFovModifier = 1.15f;
+    [SerializeField]
+    private float _jumpForce = 500f;
+    public Transform groundDetector;
+    public LayerMask ground;
     // Start is called before the first frame update
     void Start()
     {
@@ -23,20 +27,37 @@ public class PlayerMovement : MonoBehaviour
     // Update is called once per frame
     void FixedUpdate()
     {
+        // Axis
         float hMove = Input.GetAxisRaw("Horizontal");
         float vMove = Input.GetAxisRaw("Vertical");
 
+        // Controls
         bool sprint = Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift);
-        bool isSprinting = sprint && vMove >0;
+        bool jump = Input.GetKey(KeyCode.Space);
 
+        // States
+        bool isGrounded = Physics.Raycast(groundDetector.position, Vector3.down, 0.1f, ground);
+        bool isJumping = jump && isGrounded;
+        bool isSprinting = sprint && vMove >0 && !isJumping && isGrounded;
+
+        // Jumping
+        if (isJumping)
+        {
+            _rig.AddForce(Vector3.up * _jumpForce);
+        }
+
+        // Movememnt
         Vector3 direction = new Vector3(hMove, 0, vMove);
         direction.Normalize();
 
         float adjustedSpeed = _speed;
         if (isSprinting) adjustedSpeed *= _sprintModifier;
 
-        _rig.velocity = transform.TransformDirection(direction) * adjustedSpeed * Time.fixedDeltaTime;
+        Vector3 targetVelocity = transform.TransformDirection(direction) * adjustedSpeed * Time.fixedDeltaTime;
+        targetVelocity.y = _rig.velocity.y;
+        _rig.velocity = targetVelocity;
 
+        // FOV
         if (isSprinting) 
         { 
             FPScam.fieldOfView = Mathf.Lerp(FPScam.fieldOfView, _baseFov * _sprintFovModifier, Time.fixedDeltaTime * 8f); 
