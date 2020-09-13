@@ -4,15 +4,25 @@ using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
 {
+    [SerializeField]
+    private float _speed = 300f;
+    private Rigidbody _rig;
     // Start is called before the first frame update
     void Start()
     {
-        
+        Camera.main.enabled = false;
+        _rig = GetComponent<Rigidbody>();
     }
 
     // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
-        
+        float hMove = Input.GetAxis("Horizontal");
+        float vMove = Input.GetAxis("Vertical");
+
+        Vector3 direction = new Vector3(hMove, 0, vMove);
+        direction.Normalize();
+
+        _rig.velocity = transform.TransformDirection(direction) * _speed * Time.fixedDeltaTime;
     }
 }
