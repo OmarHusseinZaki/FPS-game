@@ -27,7 +27,7 @@ public class Look : MonoBehaviour
 
     void SetY()
     {
-        float input = Input.GetAxis("Mouse Y") * ySens;
+        float input = Input.GetAxis("Mouse Y") * ySens * Time.fixedDeltaTime;
         Quaternion adj = Quaternion.AngleAxis(input, -Vector3.right);
         Quaternion delta = cams.localRotation * adj;
         if(Quaternion.Angle(_camsCenter, delta) < _maxAngle)
@@ -38,7 +38,7 @@ public class Look : MonoBehaviour
 
     void SetX()
     {
-        float input = Input.GetAxis("Mouse X") * xSens;
+        float input = Input.GetAxis("Mouse X") * xSens * Time.fixedDeltaTime;
         Quaternion adj = Quaternion.AngleAxis(input, Vector3.up);
         Quaternion delta = player.localRotation * adj;
         player.localRotation = delta;

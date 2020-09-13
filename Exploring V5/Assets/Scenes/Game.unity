@@ -5359,8 +5359,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   player: {fileID: 2133143661}
   cams: {fileID: 524447395}
-  xSens: 18
-  ySens: 18
+  xSens: 100
+  ySens: 100
 --- !u!136 &2133143658
 CapsuleCollider:
   m_ObjectHideFlags: 0
