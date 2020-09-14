@@ -7,6 +7,7 @@ public class Look : MonoBehaviour
     public static bool cursorLock = true;
     public Transform player;
     public Transform cams;
+    public Transform weapon;
     public float xSens;
     public float ySens;
     private float _maxAngle = 70;
@@ -34,6 +35,7 @@ public class Look : MonoBehaviour
         {
             cams.localRotation = delta;
         }
+        weapon.rotation = cams.rotation;
     }
 
     void SetX()

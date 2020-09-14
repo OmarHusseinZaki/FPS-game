@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Weapon : MonoBehaviour
 {
-    public GameObject[] loadout;
+    public Gun[] loadout;
     public Transform weaponParent;
     private GameObject _currentWeapon;
     // Start is called before the first frame update
@@ -23,7 +23,7 @@ public class Weapon : MonoBehaviour
     {
         if (_currentWeapon != null) Destroy(_currentWeapon);
 
-        GameObject newGun = Instantiate(loadout[id], weaponParent.position, weaponParent.rotation, weaponParent) as GameObject;
+        GameObject newGun = Instantiate(loadout[id].prefab, weaponParent.position, weaponParent.rotation, weaponParent) as GameObject;
         newGun.transform.localPosition = Vector3.zero;
         newGun.transform.localEulerAngles = Vector3.zero;
         _currentWeapon = newGun;

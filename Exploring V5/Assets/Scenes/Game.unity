@@ -6166,6 +6166,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   player: {fileID: 2133143661}
   cams: {fileID: 524447395}
+  weapon: {fileID: 1578020121}
   xSens: 100
   ySens: 100
 --- !u!136 &2133143658
@@ -6260,5 +6261,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   loadout:
-  - {fileID: 7360748867408231236, guid: 0f7d3ccb67899404b9b6f89b1a670037, type: 3}
+  - {fileID: 11400000, guid: 73b3e2334b7c04f44a42e1e91efe0562, type: 2}
   weaponParent: {fileID: 1578020121}
