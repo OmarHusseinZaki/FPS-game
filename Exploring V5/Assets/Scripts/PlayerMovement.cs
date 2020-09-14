@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
 {
+    #region Variables
     [SerializeField]
     private float _speed = 300f;
     [SerializeField]
@@ -16,7 +17,9 @@ public class PlayerMovement : MonoBehaviour
     private float _jumpForce = 500f;
     public Transform groundDetector;
     public LayerMask ground;
-    // Start is called before the first frame update
+    #endregion
+
+    #region MonoBehaviour Callbacks
     void Start()
     {
         _baseFov = FPScam.fieldOfView;
@@ -24,7 +27,28 @@ public class PlayerMovement : MonoBehaviour
         _rig = GetComponent<Rigidbody>();
     }
 
-    // Update is called once per frame
+    private void Update()
+    {
+        // Axis
+        float hMove = Input.GetAxisRaw("Horizontal");
+        float vMove = Input.GetAxisRaw("Vertical");
+
+        // Controls
+        bool sprint = Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift);
+        bool jump = Input.GetKeyDown(KeyCode.Space);
+
+        // States
+        bool isGrounded = Physics.Raycast(groundDetector.position, Vector3.down, 0.1f, ground);
+        bool isJumping = jump && isGrounded;
+        bool isSprinting = sprint && vMove > 0 && !isJumping && isGrounded;
+
+        // Jumping
+        if (isJumping)
+        {
+            _rig.AddForce(Vector3.up * _jumpForce);
+        }
+    }
+
     void FixedUpdate()
     {
         // Axis
@@ -33,18 +57,13 @@ public class PlayerMovement : MonoBehaviour
 
         // Controls
         bool sprint = Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift);
-        bool jump = Input.GetKey(KeyCode.Space);
+        bool jump = Input.GetKeyDown(KeyCode.Space);
 
         // States
         bool isGrounded = Physics.Raycast(groundDetector.position, Vector3.down, 0.1f, ground);
         bool isJumping = jump && isGrounded;
         bool isSprinting = sprint && vMove >0 && !isJumping && isGrounded;
 
-        // Jumping
-        if (isJumping)
-        {
-            _rig.AddForce(Vector3.up * _jumpForce);
-        }
 
         // Movememnt
         Vector3 direction = new Vector3(hMove, 0, vMove);
@@ -64,4 +83,5 @@ public class PlayerMovement : MonoBehaviour
         }
         else { FPScam.fieldOfView = Mathf.Lerp(FPScam.fieldOfView, _baseFov, Time.fixedDeltaTime * 8f); }
     }
+    #endregion
 }

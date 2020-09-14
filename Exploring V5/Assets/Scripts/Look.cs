@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Look : MonoBehaviour
 {
+    #region Variables
     public static bool cursorLock = true;
     public Transform player;
     public Transform cams;
@@ -12,19 +13,22 @@ public class Look : MonoBehaviour
     public float ySens;
     private float _maxAngle = 70;
     private Quaternion _camsCenter;
-    // Start is called before the first frame update
+    #endregion
+
+    #region MonoBehaviour Callbacks
     void Start()
     {
         _camsCenter = cams.localRotation;
     }
 
-    // Update is called once per frame
     void Update()
     {
         SetY();
         SetX();
         UpdateCursorLock();
     }
+    #endregion
+
 
     void SetY()
     {
