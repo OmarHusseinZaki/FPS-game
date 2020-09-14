@@ -6105,9 +6105,10 @@ GameObject:
   - component: {fileID: 2133143660}
   - component: {fileID: 2133143659}
   - component: {fileID: 2133143658}
-  - component: {fileID: 2133143657}
   - component: {fileID: 2133143656}
+  - component: {fileID: 2133143657}
   - component: {fileID: 2133143655}
+  - component: {fileID: 2133143662}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -6246,3 +6247,18 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2133143662
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2133143654}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 551a4122b6ed49c4cb6292a0910f889f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  loadout:
+  - {fileID: 7360748867408231236, guid: 0f7d3ccb67899404b9b6f89b1a670037, type: 3}
+  weaponParent: {fileID: 1578020121}
