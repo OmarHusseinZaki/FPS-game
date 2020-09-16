@@ -11,12 +11,17 @@ public class PlayerMovement : MonoBehaviour
     private float _sprintModifier = 2;
     private Rigidbody _rig;
     public Camera FPScam;
+    public Transform weaponParent;
+    private Vector3 _targetWepBobPos;
     private float _baseFov;
+    private float _movementCounter;
+    private float _idleCounter;
     private float _sprintFovModifier = 1.15f;
     [SerializeField]
     private float _jumpForce = 500f;
     public Transform groundDetector;
     public LayerMask ground;
+    private Vector3 _weaponParentOrigin;
     #endregion
 
     #region MonoBehaviour Callbacks
@@ -25,6 +30,7 @@ public class PlayerMovement : MonoBehaviour
         _baseFov = FPScam.fieldOfView;
         Camera.main.enabled = false;
         _rig = GetComponent<Rigidbody>();
+        _weaponParentOrigin = weaponParent.localPosition;
     }
 
     private void Update()
@@ -46,6 +52,26 @@ public class PlayerMovement : MonoBehaviour
         if (isJumping)
         {
             _rig.AddForce(Vector3.up * _jumpForce);
+        }
+
+        //HeadBob
+        if (hMove == 0 && vMove == 0) 
+        { 
+            HeadBob(_idleCounter, 0.025f, 0.025f); 
+            _idleCounter += Time.deltaTime;
+            weaponParent.localPosition = Vector3.Lerp(weaponParent.localPosition, _targetWepBobPos, Time.deltaTime * 2f);
+        }
+        else if(!isSprinting)
+        { 
+            HeadBob(_movementCounter, 0.035f, 0.035f); 
+            _movementCounter += Time.deltaTime * 3f;
+            weaponParent.localPosition = Vector3.Lerp(weaponParent.localPosition, _targetWepBobPos, Time.deltaTime * 6f);
+        }
+        else
+        {
+            HeadBob(_movementCounter, 0.15f, 0.075f);
+            _movementCounter += Time.deltaTime * 7f;
+            weaponParent.localPosition = Vector3.Lerp(weaponParent.localPosition, _targetWepBobPos, Time.deltaTime * 10f);
         }
     }
 
@@ -84,4 +110,9 @@ public class PlayerMovement : MonoBehaviour
         else { FPScam.fieldOfView = Mathf.Lerp(FPScam.fieldOfView, _baseFov, Time.fixedDeltaTime * 8f); }
     }
     #endregion
+
+    void HeadBob(float z, float xIntensity, float yIntensity)
+    {
+        _targetWepBobPos = _weaponParentOrigin + new Vector3(Mathf.Cos(z) * xIntensity, Mathf.Sin(z * 2) * yIntensity, 0);
+    }
 }
