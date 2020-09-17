@@ -23,6 +23,7 @@ public class Weapon : MonoBehaviourPunCallbacks
     void Update()
     {
         if (!photonView.IsMine) return;
+
         if (Input.GetKeyDown(KeyCode.Alpha1)) Equip(0);
         if (_currentWeapon != null) 
         {
@@ -49,6 +50,7 @@ public class Weapon : MonoBehaviourPunCallbacks
         newGun.transform.localPosition = Vector3.zero;
         newGun.transform.localEulerAngles = Vector3.zero;
         _currentWeapon = newGun;
+        _currentWeapon.GetComponent<Sway>().enabled = photonView.IsMine;
     }
 
     void Aim(bool isAiming)

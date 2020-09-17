@@ -26,6 +26,7 @@ public class Look : MonoBehaviourPunCallbacks
     void Update()
     {
         if (!photonView.IsMine) return;
+
         SetY();
         SetX();
         UpdateCursorLock();

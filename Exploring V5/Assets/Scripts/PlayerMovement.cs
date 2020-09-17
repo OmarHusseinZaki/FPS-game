@@ -12,6 +12,7 @@ public class PlayerMovement : MonoBehaviourPunCallbacks
     private float _sprintModifier = 2;
     private Rigidbody _rig;
     public Camera FPScam;
+    public GameObject cameraParent;
     public Transform weaponParent;
     private Vector3 _targetWepBobPos;
     private float _baseFov;
@@ -28,8 +29,11 @@ public class PlayerMovement : MonoBehaviourPunCallbacks
     #region MonoBehaviour Callbacks
     void Start()
     {
+        cameraParent.SetActive(photonView.IsMine);
+        
+
         _baseFov = FPScam.fieldOfView;
-        Camera.main.enabled = false;
+        if(Camera.main) Camera.main.enabled = false;
         _rig = GetComponent<Rigidbody>();
         _weaponParentOrigin = weaponParent.localPosition;
     }
