@@ -1,8 +1,10 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Photon.Pun;
 
-public class Look : MonoBehaviour
+
+public class Look : MonoBehaviourPunCallbacks
 {
     #region Variables
     public static bool cursorLock = true;
@@ -23,6 +25,7 @@ public class Look : MonoBehaviour
 
     void Update()
     {
+        if (!photonView.IsMine) return;
         SetY();
         SetX();
         UpdateCursorLock();

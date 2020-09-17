@@ -1,8 +1,10 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Photon.Pun;
 
-public class Weapon : MonoBehaviour
+
+public class Weapon : MonoBehaviourPunCallbacks
 {
     #region Variables
 
@@ -20,6 +22,7 @@ public class Weapon : MonoBehaviour
 
     void Update()
     {
+        if (!photonView.IsMine) return;
         if (Input.GetKeyDown(KeyCode.Alpha1)) Equip(0);
         if (_currentWeapon != null) 
         {
