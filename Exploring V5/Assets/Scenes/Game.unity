@@ -933,7 +933,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 164512887}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Ground Detector
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -978,7 +978,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 212352225}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: -0.1, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 14925527}
@@ -2066,7 +2066,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 439465552}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Misc
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2334,7 +2334,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 492951556}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Cameras
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2446,7 +2446,7 @@ GameObject:
   - component: {fileID: 524447395}
   - component: {fileID: 524447397}
   - component: {fileID: 524447396}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: FPS Cam
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3726,7 +3726,7 @@ GameObject:
   - component: {fileID: 1104368854}
   - component: {fileID: 1104368856}
   - component: {fileID: 1104368855}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Shades
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4077,7 +4077,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1204498628}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Design
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4861,7 +4861,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1578020121}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Weapon
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -6109,7 +6109,7 @@ GameObject:
   - component: {fileID: 2133143657}
   - component: {fileID: 2133143655}
   - component: {fileID: 2133143662}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Player
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -6264,3 +6264,8 @@ MonoBehaviour:
   loadout:
   - {fileID: 11400000, guid: 73b3e2334b7c04f44a42e1e91efe0562, type: 2}
   weaponParent: {fileID: 1578020121}
+  bulletHolePrefab: {fileID: 3211462523278850060, guid: 2f9596107fa02754987dc9294c2b239d,
+    type: 3}
+  canBeShot:
+    serializedVersion: 2
+    m_Bits: 311
