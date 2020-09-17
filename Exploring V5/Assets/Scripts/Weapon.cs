@@ -9,6 +9,7 @@ public class Weapon : MonoBehaviour
     public Gun[] loadout;
     public Transform weaponParent;
     private int _currInd;
+    private float _currCoolDown;
     private GameObject _currentWeapon;
     public GameObject bulletHolePrefab;
     public LayerMask canBeShot;
@@ -23,7 +24,13 @@ public class Weapon : MonoBehaviour
         if (_currentWeapon != null) 
         {
             Aim(Input.GetMouseButton(1));
-            if (Input.GetMouseButtonDown(0)) Shoot();
+            if (Input.GetMouseButtonDown(0) && _currCoolDown <= 0) Shoot();
+
+            // Weapon Elasticity
+            _currentWeapon.transform.localPosition = Vector3.Lerp(_currentWeapon.transform.localPosition, Vector3.zero, Time.deltaTime * 4f);
+
+            // CoolDown
+            if (_currCoolDown > 0) _currCoolDown -= Time.deltaTime;
         }
     }
 
@@ -75,5 +82,12 @@ public class Weapon : MonoBehaviour
             newHole.transform.LookAt(hit.point + hit.normal);
             Destroy(newHole, 5f);
         }
+
+        // Gun fx
+        _currentWeapon.transform.Rotate(-loadout[_currInd].recoil, 0, 0);
+        _currentWeapon.transform.position -= _currentWeapon.transform.forward * loadout[_currInd].kickback;
+
+        // CoolDown
+        _currCoolDown = loadout[_currInd].firerate;
     }
 }
