@@ -23,7 +23,7 @@ public class Weapon : MonoBehaviour
         if (_currentWeapon != null) 
         {
             Aim(Input.GetMouseButton(1));
-            if (Input.GetMouseButton(0)) Shoot();
+            if (Input.GetMouseButtonDown(0)) Shoot();
         }
     }
 
@@ -59,8 +59,17 @@ public class Weapon : MonoBehaviour
     void Shoot()
     {
         Transform spawn = transform.Find("Cameras/FPS Cam");
+        // Bloom
+        Vector3 t_bloom = spawn.position + spawn.forward * 1000f;
+        t_bloom += Random.Range(-loadout[_currInd].bloom, loadout[_currInd].bloom) * spawn.up;
+        t_bloom += Random.Range(-loadout[_currInd].bloom, loadout[_currInd].bloom) * spawn.right;
+        t_bloom -= spawn.position;
+        t_bloom.Normalize();
+
+
+        // Raycast
         RaycastHit hit = new RaycastHit();
-        if(Physics.Raycast(spawn.position, spawn.forward, out hit, 1000f, canBeShot))
+        if(Physics.Raycast(spawn.position, t_bloom, out hit, 1000f, canBeShot))
         {
             GameObject newHole = Instantiate(bulletHolePrefab, hit.point + hit.normal * 0.001f, Quaternion.identity) as GameObject;
             newHole.transform.LookAt(hit.point + hit.normal);
