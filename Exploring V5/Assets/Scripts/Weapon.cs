@@ -24,11 +24,11 @@ public class Weapon : MonoBehaviourPunCallbacks
     {
         if (!photonView.IsMine) return;
 
-        if (Input.GetKeyDown(KeyCode.Alpha1)) Equip(0);
+        if (Input.GetKeyDown(KeyCode.Alpha1)) photonView.RPC("Equip", RpcTarget.All, 0);
         if (_currentWeapon != null) 
         {
             Aim(Input.GetMouseButton(1));
-            if (Input.GetMouseButtonDown(0) && _currCoolDown <= 0) Shoot();
+            if (Input.GetMouseButtonDown(0) && _currCoolDown <= 0) photonView.RPC("Shoot",RpcTarget.All);
 
             // Weapon Elasticity
             _currentWeapon.transform.localPosition = Vector3.Lerp(_currentWeapon.transform.localPosition, Vector3.zero, Time.deltaTime * 4f);
@@ -39,7 +39,7 @@ public class Weapon : MonoBehaviourPunCallbacks
     }
 
     #endregion
-
+    [PunRPC]
     void Equip(int id)
     {
         if (_currentWeapon != null) Destroy(_currentWeapon);
@@ -68,6 +68,7 @@ public class Weapon : MonoBehaviourPunCallbacks
         }
     }
 
+    [PunRPC]
     void Shoot()
     {
         Transform spawn = transform.Find("Cameras/FPS Cam");
@@ -86,6 +87,15 @@ public class Weapon : MonoBehaviourPunCallbacks
             GameObject newHole = Instantiate(bulletHolePrefab, hit.point + hit.normal * 0.001f, Quaternion.identity) as GameObject;
             newHole.transform.LookAt(hit.point + hit.normal);
             Destroy(newHole, 5f);
+
+            if (photonView.IsMine)
+            {
+                // If shooting another player on network
+                if(hit.collider.gameObject.layer ==  11)
+                {
+                    // Call an Rpc and Damage them
+                }
+            }
         }
 
         // Gun fx
