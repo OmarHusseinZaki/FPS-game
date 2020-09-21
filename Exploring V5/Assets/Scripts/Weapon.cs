@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using Photon.Pun;
 
 
@@ -142,5 +143,12 @@ public class Weapon : MonoBehaviourPunCallbacks
         _currentWeapon.SetActive(true);
         loadout[_currInd].Reload();
         _isReloading = false;
+    }
+
+    public void RefreshAmmo(Text text)
+    {
+        int clip = loadout[_currInd].GetClip();
+        int stash = loadout[_currInd].GetStash();
+        text.text = clip.ToString() + " / " + stash.ToString();
     }
 }
