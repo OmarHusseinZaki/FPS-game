@@ -26,11 +26,17 @@ public class PlayerMovement : MonoBehaviourPunCallbacks
     private Vector3 _weaponParentOrigin;
     public int maxHealth;
     private int _currHealth;
+    private Manager manager;
     #endregion
 
     #region MonoBehaviour Callbacks
     void Start()
     {
+        manager = GameObject.Find("Manager").GetComponent<Manager>();
+        if(manager == null)
+        {
+            Debug.LogError("Manager is null");
+        }
         _currHealth = maxHealth;
         cameraParent.SetActive(photonView.IsMine);
         if (!photonView.IsMine) gameObject.layer = 11;
@@ -63,6 +69,7 @@ public class PlayerMovement : MonoBehaviourPunCallbacks
         {
             _rig.AddForce(Vector3.up * _jumpForce);
         }
+        if (Input.GetKeyDown(KeyCode.U)) TakeDamage(700);
 
         //HeadBob
         if (hMove == 0 && vMove == 0) 
@@ -138,7 +145,8 @@ public class PlayerMovement : MonoBehaviourPunCallbacks
 
         if(_currHealth <= 0)
         {
-            Debug.Log("You Die");
+            manager.Spawn();
+            PhotonNetwork.Destroy(gameObject);
         }
     }
 }

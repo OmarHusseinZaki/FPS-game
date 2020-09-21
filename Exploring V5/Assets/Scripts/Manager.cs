@@ -6,7 +6,7 @@ using Photon.Pun;
 public class Manager : MonoBehaviour
 {
     public string playerPrefab;
-    public Transform spawnPoint;
+    public Transform[] spawnPoints;
 
     private void Start()
     {
@@ -15,6 +15,7 @@ public class Manager : MonoBehaviour
 
     public void Spawn()
     {
-        PhotonNetwork.Instantiate(playerPrefab, spawnPoint.position, spawnPoint.rotation);
+        Transform spawn = spawnPoints[Random.Range(0, spawnPoints.Length)];
+        PhotonNetwork.Instantiate(playerPrefab, spawn.position, spawn.rotation);
     }
 }

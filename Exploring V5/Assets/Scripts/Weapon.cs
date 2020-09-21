@@ -100,7 +100,10 @@ public class Weapon : MonoBehaviourPunCallbacks
 
         // Gun fx
         _currentWeapon.transform.Rotate(-loadout[_currInd].recoil, 0, 0);
-        _currentWeapon.transform.position -= _currentWeapon.transform.forward * loadout[_currInd].kickback;
+        if (photonView.IsMine)
+        {
+            _currentWeapon.transform.position -= _currentWeapon.transform.forward * loadout[_currInd].kickback;
+        }
 
         // CoolDown
         _currCoolDown = loadout[_currInd].firerate;
