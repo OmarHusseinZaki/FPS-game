@@ -22,19 +22,22 @@ public class Weapon : MonoBehaviourPunCallbacks
 
     void Update()
     {
-        if (!photonView.IsMine) return;
-
-        if (Input.GetKeyDown(KeyCode.Alpha1)) photonView.RPC("Equip", RpcTarget.All, 0);
+        if (photonView.IsMine && Input.GetKeyDown(KeyCode.Alpha1)) photonView.RPC("Equip", RpcTarget.All, 0);
         if (_currentWeapon != null) 
         {
-            Aim(Input.GetMouseButton(1));
-            if (Input.GetMouseButtonDown(0) && _currCoolDown <= 0) photonView.RPC("Shoot",RpcTarget.All);
+            if (photonView.IsMine)
+            {
+                Aim(Input.GetMouseButton(1));
+                if (Input.GetMouseButtonDown(0) && _currCoolDown <= 0) photonView.RPC("Shoot", RpcTarget.All);
+
+                // CoolDown
+                if (_currCoolDown > 0) _currCoolDown -= Time.deltaTime;
+            }
 
             // Weapon Elasticity
             _currentWeapon.transform.localPosition = Vector3.Lerp(_currentWeapon.transform.localPosition, Vector3.zero, Time.deltaTime * 4f);
 
-            // CoolDown
-            if (_currCoolDown > 0) _currCoolDown -= Time.deltaTime;
+           
         }
     }
 
@@ -100,10 +103,7 @@ public class Weapon : MonoBehaviourPunCallbacks
 
         // Gun fx
         _currentWeapon.transform.Rotate(-loadout[_currInd].recoil, 0, 0);
-        if (photonView.IsMine)
-        {
-            _currentWeapon.transform.position -= _currentWeapon.transform.forward * loadout[_currInd].kickback;
-        }
+        _currentWeapon.transform.position -= _currentWeapon.transform.forward * loadout[_currInd].kickback;
 
         // CoolDown
         _currCoolDown = loadout[_currInd].firerate;
@@ -112,6 +112,6 @@ public class Weapon : MonoBehaviourPunCallbacks
     [PunRPC]
     void TakeDamage(int damage)
     {
-        GetComponent<PlayerMovement>().TakeDamage(damage);
+        GetComponent<Player>().TakeDamage(damage);
     }
 }

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Photon.Pun;
 
-public class PlayerMovement : MonoBehaviourPunCallbacks
+public class Player : MonoBehaviourPunCallbacks
 {
     #region Variables
     [SerializeField]
@@ -26,14 +26,15 @@ public class PlayerMovement : MonoBehaviourPunCallbacks
     private Vector3 _weaponParentOrigin;
     public int maxHealth;
     private int _currHealth;
-    private Manager manager;
+    private Manager _manager;
+    private Transform _UIHealthBar;
     #endregion
 
     #region MonoBehaviour Callbacks
     void Start()
     {
-        manager = GameObject.Find("Manager").GetComponent<Manager>();
-        if(manager == null)
+        _manager = GameObject.Find("Manager").GetComponent<Manager>();
+        if(_manager == null)
         {
             Debug.LogError("Manager is null");
         }
@@ -45,7 +46,14 @@ public class PlayerMovement : MonoBehaviourPunCallbacks
         if(Camera.main) Camera.main.enabled = false;
         _rig = GetComponent<Rigidbody>();
         _weaponParentOrigin = weaponParent.localPosition;
+
+        if (photonView.IsMine)
+        {
+            _UIHealthBar = GameObject.Find("HUD/Health/Bar").transform;
+            RefreshHealthBar();
+        }
     }
+
 
     private void Update()
     {
@@ -69,7 +77,7 @@ public class PlayerMovement : MonoBehaviourPunCallbacks
         {
             _rig.AddForce(Vector3.up * _jumpForce);
         }
-        if (Input.GetKeyDown(KeyCode.U)) TakeDamage(700);
+        if (Input.GetKeyDown(KeyCode.U)) TakeDamage(100);
 
         //HeadBob
         if (hMove == 0 && vMove == 0) 
@@ -90,6 +98,9 @@ public class PlayerMovement : MonoBehaviourPunCallbacks
             _movementCounter += Time.deltaTime * 7f;
             weaponParent.localPosition = Vector3.Lerp(weaponParent.localPosition, _targetWepBobPos, Time.deltaTime * 10f);
         }
+
+        // UI Refreshes
+        RefreshHealthBar();
     }
 
     void FixedUpdate()
@@ -140,13 +151,19 @@ public class PlayerMovement : MonoBehaviourPunCallbacks
         if (photonView.IsMine)
         {
             _currHealth -= damage;
-            Debug.Log(_currHealth);
+            RefreshHealthBar();
         }
 
         if(_currHealth <= 0)
         {
-            manager.Spawn();
+            _manager.Spawn();
             PhotonNetwork.Destroy(gameObject);
         }
+    }
+
+    void RefreshHealthBar()
+    {
+        float healthRatio = (float)_currHealth / (float)maxHealth;
+        _UIHealthBar.localScale =Vector3.Lerp(_UIHealthBar.localScale, new Vector3(healthRatio, 1, 1), Time.deltaTime * 8f);
     }
 }
