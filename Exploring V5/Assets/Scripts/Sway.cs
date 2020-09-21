@@ -10,6 +10,7 @@ public class Sway : MonoBehaviourPunCallbacks
 
     public float intensity;
     public float smooth;
+    public bool isMine;
     private Quaternion _originRotation;
     #endregion
 
@@ -33,6 +34,12 @@ public class Sway : MonoBehaviourPunCallbacks
         // Controls
         float xMouse = Input.GetAxis("Mouse X");
         float yMouse = Input.GetAxis("Mouse Y");
+
+        if (!isMine)
+        {
+            xMouse = 0;
+            yMouse = 0;
+        }
 
         //Calculate target rotation
         Quaternion xAdj = Quaternion.AngleAxis(-intensity * xMouse, Vector3.up);

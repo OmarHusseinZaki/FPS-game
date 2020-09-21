@@ -50,7 +50,7 @@ public class Weapon : MonoBehaviourPunCallbacks
         newGun.transform.localPosition = Vector3.zero;
         newGun.transform.localEulerAngles = Vector3.zero;
         _currentWeapon = newGun;
-        _currentWeapon.GetComponent<Sway>().enabled = photonView.IsMine;
+        _currentWeapon.GetComponent<Sway>().isMine = photonView.IsMine;
     }
 
     void Aim(bool isAiming)
@@ -93,7 +93,7 @@ public class Weapon : MonoBehaviourPunCallbacks
                 // If shooting another player on network
                 if(hit.collider.gameObject.layer ==  11)
                 {
-                    // Call an Rpc and Damage them
+                    hit.collider.gameObject.GetPhotonView().RPC("TakeDamage", RpcTarget.All, loadout[_currInd].Damage);
                 }
             }
         }
@@ -104,5 +104,11 @@ public class Weapon : MonoBehaviourPunCallbacks
 
         // CoolDown
         _currCoolDown = loadout[_currInd].firerate;
+    }
+
+    [PunRPC]
+    void TakeDamage(int damage)
+    {
+        GetComponent<PlayerMovement>().TakeDamage(damage);
     }
 }

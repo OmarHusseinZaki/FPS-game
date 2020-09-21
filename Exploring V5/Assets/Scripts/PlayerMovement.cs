@@ -24,11 +24,14 @@ public class PlayerMovement : MonoBehaviourPunCallbacks
     public Transform groundDetector;
     public LayerMask ground;
     private Vector3 _weaponParentOrigin;
+    public int maxHealth;
+    private int _currHealth;
     #endregion
 
     #region MonoBehaviour Callbacks
     void Start()
     {
+        _currHealth = maxHealth;
         cameraParent.SetActive(photonView.IsMine);
         if (!photonView.IsMine) gameObject.layer = 11;
 
@@ -123,5 +126,19 @@ public class PlayerMovement : MonoBehaviourPunCallbacks
     void HeadBob(float z, float xIntensity, float yIntensity)
     {
         _targetWepBobPos = _weaponParentOrigin + new Vector3(Mathf.Cos(z) * xIntensity, Mathf.Sin(z * 2) * yIntensity, 0);
+    }
+
+    public void TakeDamage(int damage)
+    {
+        if (photonView.IsMine)
+        {
+            _currHealth -= damage;
+            Debug.Log(_currHealth);
+        }
+
+        if(_currHealth <= 0)
+        {
+            Debug.Log("You Die");
+        }
     }
 }
