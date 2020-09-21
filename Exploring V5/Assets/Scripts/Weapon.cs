@@ -15,20 +15,33 @@ public class Weapon : MonoBehaviourPunCallbacks
     private GameObject _currentWeapon;
     public GameObject bulletHolePrefab;
     public LayerMask canBeShot;
+    private bool _isReloading;
 
     #endregion
 
     #region MonoBehaviour Callbacks
+
+    private void Start()
+    {
+        foreach (Gun a in loadout) a.Initialize();
+        photonView.RPC("Equip", RpcTarget.All, 0);
+    }
 
     void Update()
     {
         if (photonView.IsMine && Input.GetKeyDown(KeyCode.Alpha1)) photonView.RPC("Equip", RpcTarget.All, 0);
         if (_currentWeapon != null) 
         {
-            if (photonView.IsMine)
+            if (photonView.IsMine) 
             {
                 Aim(Input.GetMouseButton(1));
-                if (Input.GetMouseButtonDown(0) && _currCoolDown <= 0) photonView.RPC("Shoot", RpcTarget.All);
+                if (Input.GetMouseButtonDown(0) && _currCoolDown <= 0) 
+                {
+                    if (loadout[_currInd].FireBullet()) photonView.RPC("Shoot", RpcTarget.All);
+                    else StartCoroutine(Reload(loadout[_currInd].reloadTime));
+                }
+
+                if(Input.GetKeyDown(KeyCode.R)) StartCoroutine(Reload(loadout[_currInd].reloadTime));
 
                 // CoolDown
                 if (_currCoolDown > 0) _currCoolDown -= Time.deltaTime;
@@ -45,7 +58,11 @@ public class Weapon : MonoBehaviourPunCallbacks
     [PunRPC]
     void Equip(int id)
     {
-        if (_currentWeapon != null) Destroy(_currentWeapon);
+        if (_currentWeapon != null) 
+        {
+            if(_isReloading) StopCoroutine("Reload");
+            Destroy(_currentWeapon);
+        }
 
         _currInd = id;
 
@@ -113,5 +130,17 @@ public class Weapon : MonoBehaviourPunCallbacks
     void TakeDamage(int damage)
     {
         GetComponent<Player>().TakeDamage(damage);
+    }
+
+    IEnumerator Reload(float wait)
+    {
+        _isReloading = true;
+        _currentWeapon.SetActive(false);
+
+        yield return new WaitForSeconds(wait);
+        
+        _currentWeapon.SetActive(true);
+        loadout[_currInd].Reload();
+        _isReloading = false;
     }
 }
