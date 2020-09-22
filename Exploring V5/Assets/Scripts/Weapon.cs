@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using Photon.Pun;
-
+using Photon.Pun.Demo.Cockpit.Forms;
 
 public class Weapon : MonoBehaviourPunCallbacks
 {
@@ -31,16 +31,30 @@ public class Weapon : MonoBehaviourPunCallbacks
     void Update()
     {
         if (photonView.IsMine && Input.GetKeyDown(KeyCode.Alpha1)) photonView.RPC("Equip", RpcTarget.All, 0);
+        if (photonView.IsMine && Input.GetKeyDown(KeyCode.Alpha2)) photonView.RPC("Equip", RpcTarget.All, 1);
         if (_currentWeapon != null) 
         {
             if (photonView.IsMine) 
             {
                 Aim(Input.GetMouseButton(1));
-                if (Input.GetMouseButtonDown(0) && _currCoolDown <= 0) 
+
+                if (loadout[_currInd].burst != 1)
                 {
-                    if (loadout[_currInd].FireBullet()) photonView.RPC("Shoot", RpcTarget.All);
-                    else StartCoroutine(Reload(loadout[_currInd].reloadTime));
+                    if (Input.GetMouseButtonDown(0) && _currCoolDown <= 0)
+                    {
+                        if (loadout[_currInd].FireBullet()) photonView.RPC("Shoot", RpcTarget.All);
+                        else StartCoroutine(Reload(loadout[_currInd].reloadTime));
+                    }
                 }
+                else
+                {
+                    if (Input.GetMouseButton(0) && _currCoolDown <= 0)
+                    {
+                        if (loadout[_currInd].FireBullet()) photonView.RPC("Shoot", RpcTarget.All);
+                        else StartCoroutine(Reload(loadout[_currInd].reloadTime));
+                    }
+                }
+
 
                 if(Input.GetKeyDown(KeyCode.R)) StartCoroutine(Reload(loadout[_currInd].reloadTime));
 

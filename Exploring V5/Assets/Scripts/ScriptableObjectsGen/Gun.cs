@@ -9,6 +9,7 @@ public class Gun : ScriptableObject
     public int Damage;
     public int ammo;
     public int clipSize;
+    public int burst; // 0 Semi | 1 Auto | 2+ Burst
     public float reloadTime;
     public float firerate;
     public float bloom;

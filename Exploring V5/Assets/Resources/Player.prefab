@@ -161,7 +161,7 @@ MonoBehaviour:
     m_Bits: 256
   maxHealth: 500
   slideMod: 2.5
-  lengthOfSlide: 3
+  lengthOfSlide: 1
 --- !u!114 &2895945855662016641
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -175,6 +175,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   loadout:
+  - {fileID: 11400000, guid: ee9673167fd061f488ce5672b3b5b270, type: 2}
   - {fileID: 11400000, guid: 73b3e2334b7c04f44a42e1e91efe0562, type: 2}
   weaponParent: {fileID: 2895945856179262966}
   bulletHolePrefab: {fileID: 3211462523278850060, guid: 2f9596107fa02754987dc9294c2b239d,

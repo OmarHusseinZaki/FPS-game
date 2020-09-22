@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e41f1a375d092f14db453f7412aae7a9, type: 3}
+  m_Name: Smg
+  m_EditorClassIdentifier: 
+  gunName: Smg
+  Damage: 35
+  ammo: 150
+  clipSize: 32
+  burst: 1
+  reloadTime: 2.5
+  firerate: 0.09
+  bloom: 20
+  recoil: 4
+  kickback: 0.05
+  aimSpeed: 20
+  prefab: {fileID: 7360748867408231236, guid: 8d5eb411cd710e941a6c4aec95d5edff, type: 3}
