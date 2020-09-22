@@ -17,6 +17,7 @@ public class Weapon : MonoBehaviourPunCallbacks
     public GameObject bulletHolePrefab;
     public LayerMask canBeShot;
     private bool _isReloading;
+    public bool isAim;
 
     #endregion
 
@@ -90,6 +91,7 @@ public class Weapon : MonoBehaviourPunCallbacks
 
     void Aim(bool isAiming)
     {
+        isAim = isAiming;
         Transform anchor = _currentWeapon.transform.Find("Anchor");
         Transform state_ads = _currentWeapon.transform.Find("States/ADS");
         Transform state_hip = _currentWeapon.transform.Find("States/Hip");

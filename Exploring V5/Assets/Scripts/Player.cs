@@ -104,20 +104,24 @@ public class Player : MonoBehaviourPunCallbacks
         if (Input.GetKeyDown(KeyCode.U)) TakeDamage(100);
 
         //HeadBob
-        if (_sliding) { }
-        else if (hMove == 0 && vMove == 0) 
+        if (_sliding)  // Sliding
+        {
+            HeadBob(_movementCounter, 0.15f, 0.075f);
+            weaponParent.localPosition = Vector3.Lerp(weaponParent.localPosition, _targetWepBobPos, Time.deltaTime * 10f);
+        }
+        else if (hMove == 0 && vMove == 0) // Idle 
         { 
             HeadBob(_idleCounter, 0.025f, 0.025f); 
             _idleCounter += Time.deltaTime;
             weaponParent.localPosition = Vector3.Lerp(weaponParent.localPosition, _targetWepBobPos, Time.deltaTime * 2f);
         }
-        else if(!isSprinting)
+        else if(!isSprinting) // Walking
         { 
             HeadBob(_movementCounter, 0.035f, 0.035f); 
             _movementCounter += Time.deltaTime * 3f;
             weaponParent.localPosition = Vector3.Lerp(weaponParent.localPosition, _targetWepBobPos, Time.deltaTime * 6f);
         }
-        else
+        else // Sprinting
         {
             HeadBob(_movementCounter, 0.15f, 0.075f);
             _movementCounter += Time.deltaTime * 7f;
@@ -208,7 +212,9 @@ public class Player : MonoBehaviourPunCallbacks
 
     void HeadBob(float z, float xIntensity, float yIntensity)
     {
-        _targetWepBobPos = _weaponParentCurPos + new Vector3(Mathf.Cos(z) * xIntensity, Mathf.Sin(z * 2) * yIntensity, 0);
+        float aimAdj = 1f;
+        if (_weapon.isAim) aimAdj = 0.1f;
+        _targetWepBobPos = _weaponParentCurPos + new Vector3(Mathf.Cos(z) * xIntensity * aimAdj, Mathf.Sin(z * 2) * yIntensity * aimAdj, 0);
     }
 
     public void TakeDamage(int damage)

@@ -161,7 +161,7 @@ MonoBehaviour:
     m_Bits: 256
   maxHealth: 500
   slideMod: 2.5
-  lengthOfSlide: 1
+  lengthOfSlide: 0.75
 --- !u!114 &2895945855662016641
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -183,6 +183,7 @@ MonoBehaviour:
   canBeShot:
     serializedVersion: 2
     m_Bits: 2359
+  isAim: 0
 --- !u!114 &6148383555709696026
 MonoBehaviour:
   m_ObjectHideFlags: 0
