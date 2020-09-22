@@ -37,7 +37,13 @@ public class Player : MonoBehaviourPunCallbacks
     private Vector3 _slideDir;
     public float slideMod;
     public float lengthOfSlide;
+    public float slideAmount;
     private Vector3 _origin;
+    public float crouchMod;
+    public float crouchAmount;
+    private bool crouched;
+    public GameObject standingColl;
+    public GameObject crouchingColl;
     
     #endregion
 
@@ -90,18 +96,25 @@ public class Player : MonoBehaviourPunCallbacks
         // Controls
         bool sprint = Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift);
         bool jump = Input.GetKeyDown(KeyCode.Space);
+        bool crouch = Input.GetKeyDown(KeyCode.LeftControl) || Input.GetKeyDown(KeyCode.RightControl);
 
         // States
-        bool isGrounded = Physics.Raycast(groundDetector.position, Vector3.down, 0.1f, ground);
+        bool isGrounded = Physics.Raycast(groundDetector.position, Vector3.down, 0.15f, ground);
         bool isJumping = jump && isGrounded;
         bool isSprinting = sprint && vMove > 0 && !isJumping && isGrounded;
+        bool isCrouching = crouch && !isSprinting && !isJumping && isGrounded;
+
+        // Crouching
+        if (isCrouching) photonView.RPC("SetCrouch", RpcTarget.All, !crouched);
 
         // Jumping
         if (isJumping)
         {
+            if (crouched) photonView.RPC("SetCrouch", RpcTarget.All, false);
             _rig.AddForce(Vector3.up * _jumpForce);
         }
         if (Input.GetKeyDown(KeyCode.U)) TakeDamage(100);
+
 
         //HeadBob
         if (_sliding)  // Sliding
@@ -115,10 +128,16 @@ public class Player : MonoBehaviourPunCallbacks
             _idleCounter += Time.deltaTime;
             weaponParent.localPosition = Vector3.Lerp(weaponParent.localPosition, _targetWepBobPos, Time.deltaTime * 2f);
         }
-        else if(!isSprinting) // Walking
+        else if(!isSprinting && !crouched) // Walking
         { 
             HeadBob(_movementCounter, 0.035f, 0.035f); 
             _movementCounter += Time.deltaTime * 3f;
+            weaponParent.localPosition = Vector3.Lerp(weaponParent.localPosition, _targetWepBobPos, Time.deltaTime * 6f);
+        }
+        else if(crouched) // Crouching
+        {
+            HeadBob(_movementCounter, 0.02f, 0.02f);
+            _movementCounter += Time.deltaTime * 1.75f;
             weaponParent.localPosition = Vector3.Lerp(weaponParent.localPosition, _targetWepBobPos, Time.deltaTime * 6f);
         }
         else // Sprinting
@@ -147,7 +166,7 @@ public class Player : MonoBehaviourPunCallbacks
         bool slide = Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl);
 
         // States
-        bool isGrounded = Physics.Raycast(groundDetector.position, Vector3.down, 0.1f, ground);
+        bool isGrounded = Physics.Raycast(groundDetector.position, Vector3.down, 0.15f, ground);
         bool isJumping = jump && isGrounded;
         bool isSprinting = sprint && vMove > 0 && !isJumping && isGrounded;
         bool isSliding = slide && isSprinting && !_sliding;
@@ -162,9 +181,14 @@ public class Player : MonoBehaviourPunCallbacks
             direction = new Vector3(hMove, 0, vMove);
             direction.Normalize();
             direction = transform.TransformDirection(direction);
-            
 
-            if (isSprinting) adjustedSpeed *= _sprintModifier;
+
+            if (isSprinting)
+            {
+                if (crouched) photonView.RPC("SetCrouch", RpcTarget.All, false);
+                adjustedSpeed *= _sprintModifier;
+            }
+            else if (crouched) adjustedSpeed *= crouchMod;
         }
         else
         {
@@ -174,7 +198,7 @@ public class Player : MonoBehaviourPunCallbacks
             if (_slideTime <= 0) 
             {
                 _sliding = false;
-                _weaponParentCurPos += Vector3.up * 0.5f;
+                _weaponParentCurPos -= Vector3.down * (slideAmount - crouchAmount);
             }
         }
 
@@ -189,14 +213,15 @@ public class Player : MonoBehaviourPunCallbacks
             _sliding = true;
             _slideDir = direction;
             _slideTime = lengthOfSlide;
-            _weaponParentCurPos += Vector3.down * 0.5f;
+            _weaponParentCurPos += Vector3.down * (slideAmount - crouchAmount);
+            if (!crouched) photonView.RPC("SetCrouch", RpcTarget.All, true);
         }
 
         // Camera adj
         if (_sliding)
         {
             FPScam.fieldOfView = Mathf.Lerp(FPScam.fieldOfView, _baseFov * _sprintFovModifier * 1.25f, Time.fixedDeltaTime * 8f);
-            FPScam.transform.localPosition = Vector3.Lerp(FPScam.transform.localPosition, _origin + Vector3.down * 0.5f, Time.fixedDeltaTime * 6f);
+            FPScam.transform.localPosition = Vector3.Lerp(FPScam.transform.localPosition, _origin + Vector3.down * slideAmount, Time.fixedDeltaTime * 6f);
         }
         else
         {
@@ -205,7 +230,9 @@ public class Player : MonoBehaviourPunCallbacks
                 FPScam.fieldOfView = Mathf.Lerp(FPScam.fieldOfView, _baseFov * _sprintFovModifier, Time.fixedDeltaTime * 8f);
             }
             else { FPScam.fieldOfView = Mathf.Lerp(FPScam.fieldOfView, _baseFov, Time.fixedDeltaTime * 8f); }
-            FPScam.transform.localPosition = Vector3.Lerp(FPScam.transform.localPosition, _origin, Time.fixedDeltaTime * 6f);
+
+            if (crouched) FPScam.transform.localPosition = Vector3.Lerp(FPScam.transform.localPosition, _origin + Vector3.down * crouchAmount, Time.deltaTime * 6f);
+            else FPScam.transform.localPosition = Vector3.Lerp(FPScam.transform.localPosition, _origin, Time.fixedDeltaTime * 6f);
         }
     }
     #endregion
@@ -215,6 +242,27 @@ public class Player : MonoBehaviourPunCallbacks
         float aimAdj = 1f;
         if (_weapon.isAim) aimAdj = 0.1f;
         _targetWepBobPos = _weaponParentCurPos + new Vector3(Mathf.Cos(z) * xIntensity * aimAdj, Mathf.Sin(z * 2) * yIntensity * aimAdj, 0);
+    }
+
+    [PunRPC]
+    void SetCrouch(bool state)
+    {
+        if (crouched == state) return;
+
+        crouched = state;
+
+        if (crouched)
+        {
+            standingColl.SetActive(false);
+            crouchingColl.SetActive(true);
+            _weaponParentCurPos += Vector3.down * crouchAmount;
+        }
+        else
+        {
+            standingColl.SetActive(true);
+            crouchingColl.SetActive(false);
+            _weaponParentCurPos -= Vector3.down * crouchAmount;
+        }
     }
 
     public void TakeDamage(int damage)
