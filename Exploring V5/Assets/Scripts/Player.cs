@@ -4,7 +4,7 @@ using UnityEngine;
 using Photon.Pun;
 using UnityEngine.UI;
 
-public class Player : MonoBehaviourPunCallbacks
+public class Player : MonoBehaviourPunCallbacks,IPunObservable
 {
     #region Variables
     [SerializeField]
@@ -44,7 +44,24 @@ public class Player : MonoBehaviourPunCallbacks
     private bool crouched;
     public GameObject standingColl;
     public GameObject crouchingColl;
-    
+    private float _aimAngle;
+
+    #endregion
+
+    #region Photon Callbacks
+
+    public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo message)
+    {
+        if (stream.IsWriting)
+        {
+            stream.SendNext((int)(weaponParent.transform.localEulerAngles.x * 100f));
+        }
+        else
+        {
+            _aimAngle = (int)stream.ReceiveNext() / 100f;
+        }
+    }
+
     #endregion
 
     #region MonoBehaviour Callbacks
@@ -65,7 +82,12 @@ public class Player : MonoBehaviourPunCallbacks
 
         cameraParent.SetActive(photonView.IsMine);
 
-        if (!photonView.IsMine) gameObject.layer = 11;
+        if (!photonView.IsMine)
+        {
+            gameObject.layer = 11;
+            standingColl.layer = 11;
+            crouchingColl.layer = 11;
+        }
 
         _baseFov = FPScam.fieldOfView;
         _origin = FPScam.transform.localPosition;
@@ -87,7 +109,11 @@ public class Player : MonoBehaviourPunCallbacks
 
     private void Update()
     {
-        if (!photonView.IsMine) return;
+        if (!photonView.IsMine)
+        {
+            RefreshMultiplayerState();
+            return;
+        }
 
         // Axis
         float hMove = Input.GetAxisRaw("Horizontal");
@@ -263,6 +289,19 @@ public class Player : MonoBehaviourPunCallbacks
             crouchingColl.SetActive(false);
             _weaponParentCurPos -= Vector3.down * crouchAmount;
         }
+    }
+
+    void RefreshMultiplayerState()
+    {
+        float cacheEulY = weaponParent.localEulerAngles.y;
+
+        Quaternion targetRotation = Quaternion.identity * Quaternion.AngleAxis(_aimAngle, Vector3.right);
+        weaponParent.rotation = Quaternion.Slerp(weaponParent.rotation, targetRotation, Time.deltaTime * 8f);
+
+        Vector3 finalRotation = weaponParent.localEulerAngles;
+        finalRotation.y = cacheEulY;
+
+        weaponParent.localEulerAngles = finalRotation;
     }
 
     public void TakeDamage(int damage)

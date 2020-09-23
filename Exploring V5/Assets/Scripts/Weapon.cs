@@ -130,7 +130,7 @@ public class Weapon : MonoBehaviourPunCallbacks
                 // If shooting another player on network
                 if(hit.collider.gameObject.layer ==  11)
                 {
-                    hit.collider.gameObject.GetPhotonView().RPC("TakeDamage", RpcTarget.All, loadout[_currInd].Damage);
+                    hit.collider.transform.root.gameObject.GetPhotonView().RPC("TakeDamage", RpcTarget.All, loadout[_currInd].Damage);
                 }
             }
         }
