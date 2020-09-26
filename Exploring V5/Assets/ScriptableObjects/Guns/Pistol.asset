@@ -16,9 +16,10 @@ MonoBehaviour:
   Damage: 50
   ammo: 20
   clipSize: 8
+  burst: 0
   reloadTime: 1.5
   firerate: 0.1
-  bloom: 20
+  bloom: 1
   recoil: 7
   kickback: 0.1
   aimSpeed: 20
